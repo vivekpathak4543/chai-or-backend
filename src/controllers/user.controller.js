@@ -458,6 +458,7 @@ export {
   loginUser,
   logoutUser,
   refreshAccessToken,
+  changeCurrentPassword,
   getCurrentUser,
   updateAccountDetails,
   updateUserAvatar,
