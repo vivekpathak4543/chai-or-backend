@@ -160,8 +160,8 @@ const logoutUser = asyncHandler(async (req, res) => {
   await User.findByIdAndUpdate(
     req.user._id,
     {
-      $set: {
-        refreshToken: undefined,
+      $unset: {
+        refreshToken: 1,
       },
     },
     {
@@ -244,7 +244,9 @@ const changeCurrentPassword = asyncHandler(async (req, res) => {
   );
 });
 const getCurrentUser = asyncHandler(async (req, res) => {
-  return res.status(200).json(200, req.user, "current user fetch successfully");
+  return await res
+    .status(200)
+    .json(new ApiResponse(200, req.user, "current user fetch successfully"));
 });
 
 const updateAccountDetails = asyncHandler(async (req, res) => {
@@ -400,6 +402,9 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
 });
 
 const getWatchHistory = asyncHandler(async (req, res) => {
+  if (!mongoose.Types.ObjectId.isValid(req.user._id)) {
+    return res.status(400).json({ message: "Invalid user ID" });
+  }
   const user = await User.aggregate([
     {
       $match: {
